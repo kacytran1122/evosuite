@@ -1,0 +1,41 @@
+# Compiled class files and build output
+target/
+*.class
+*.jar
+!evosuite-1.0.6.jar
+!evosuite-standalone-runtime-1.0.6.jar
+!evosuite-master-extended.jar
+
+# EvoSuite internal directories
+.evosuite/
+evosuite-files/
+evosuite-report/
+
+# Maven local repo
+.m2/
+
+# Large source clone (evosuite-src has its own repo)
+evosuite-src/
+
+# Patch working directories
+patch-*/
+tmp-*/
+patch-final/
+patch-work*/
+evosuite-patched-work/
+
+# IDE files
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Tutorial zip downloads (keep extracted folders)
+Tutorial_Stack.zip
+Tutorial_Maven.zip
+Tutorial_Experiments.zip
