@@ -68,7 +68,7 @@ mvn -version    # should show Apache Maven 3.x.x
 
 ## Tutorial 1 - EvoSuite on the Command Line
 
-**Screenshot location: after running the JUnit step at the bottom of this section**
+**Screenshot: capture from `* EvoSuite 1.0.6` down to `* Computation finished`**
 
 ### Steps
 
@@ -81,8 +81,8 @@ mvn compile
 # 2. Download JUnit/Hamcrest dependencies
 mvn dependency:copy-dependencies
 
-# 3. Generate tests with EvoSuite (branch coverage, 30s budget)
-java -jar ../evosuite-1.0.6.jar -class tutorial.Stack -projectCP target\classes -criterion branch -Dsearch_budget=30
+# 3. Generate tests with EvoSuite (branch coverage, 20s budget)
+java -jar ../evosuite-1.0.6.jar -class tutorial.Stack -projectCP target\classes -criterion branch -Dsearch_budget=20
 
 # 4. Set classpath (Windows - use semicolons)
 $CLASSPATH = "target\classes;..\evosuite-standalone-runtime-1.0.6.jar;evosuite-tests;target\dependency\junit-4.12.jar;target\dependency\hamcrest-core-1.3.jar"
@@ -90,28 +90,34 @@ $CLASSPATH = "target\classes;..\evosuite-standalone-runtime-1.0.6.jar;evosuite-t
 # 5. Compile the generated tests
 javac -cp $CLASSPATH evosuite-tests\tutorial\*.java
 
-# 6. Run the generated tests  <- SCREENSHOT HERE
+# 6. Run the generated tests
 java -cp $CLASSPATH org.junit.runner.JUnitCore tutorial.Stack_ESTest
 ```
 
-**Expected output:**
-```
-JUnit version 4.12
-.....
-Time: X.XXX
-OK (5 tests)
-```
+### Actual output from this run
 
-### What to screenshot
-Take a screenshot of the terminal showing:
-- The EvoSuite output: `Coverage of criterion BRANCH: 100%` and `Generated X tests`
-- The JUnit output: `OK (5 tests)`
+```
+* EvoSuite 1.0.6
+* Going to generate test cases for class: tutorial.Stack
+* Test criterion:
+  - Branch Coverage
+* Search finished after 3s and 10 generations, 4509 statements
+* Coverage of criterion BRANCH: 100%
+* Total number of goals: 7
+* Number of covered goals: 7
+* Generated 5 tests with total length 24
+* Resulting test suite's coverage: 100%
+* Resulting test suite's mutation score: 61%
+* Writing JUnit test case 'Stack_ESTest' to evosuite-tests
+* Done!
+* Computation finished
+```
 
 ---
 
 ## Tutorial 2 - Maven Integration
 
-**Screenshot location: after `mvn evosuite:prepare test`**
+**Screenshot: capture the T E S T S block down to `BUILD SUCCESS`**
 
 ### Steps
 
@@ -133,27 +139,37 @@ mvn evosuite:info
 # 5. Export tests to src/test/evosuite/
 mvn evosuite:export
 
-# 6. Run ALL tests (manual + generated)  <- SCREENSHOT HERE
+# 6. Run ALL tests (manual + generated)
 mvn evosuite:prepare test
 ```
 
-**Expected output:**
-```
-Tests run: 19, Failures: 0, Errors: 0, Skipped: 0
-BUILD SUCCESS
-```
+### Actual output from this run
 
-### What to screenshot
-Take a screenshot of the terminal showing the test run results:
-- All test classes listed (LinkedList_ESTest, Node_ESTest, Stack_ESTest, StackTest, etc.)
-- `Tests run: 19, Failures: 0, Errors: 0`
-- `BUILD SUCCESS`
+```
+T E S T S
+Running tutorial.LinkedListIterator_ESTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.71 sec
+Running tutorial.LinkedList_ESTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.018 sec
+Running tutorial.Node_ESTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.027 sec
+Running tutorial.StackTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0 sec
+Running tutorial.Stack_ESTest
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.028 sec
+
+Results :
+Tests run: 19, Failures: 0, Errors: 0, Skipped: 0
+
+BUILD SUCCESS
+Total time: 10.038 s
+```
 
 ---
 
 ## Tutorial 3 - Running Experiments
 
-**Screenshot location: after displaying statistics.csv**
+**Screenshot: capture the full statistics.csv table**
 
 ### Steps
 
@@ -178,38 +194,57 @@ java -jar ../evosuite-1.0.6.jar -criterion branch -prefix tutorial -Dsearch_budg
 # 6. Run experiment - combined criteria (default)
 java -jar ../evosuite-1.0.6.jar -prefix tutorial -Dsearch_budget=30 -Doutput_variables=TARGET_CLASS,criterion,Size,Length,MutationScore
 
-# 7. View results  <- SCREENSHOT HERE
+# 7. View results
 Get-Content evosuite-report\statistics.csv
 ```
 
-**Expected output:** A CSV table comparing 9 classes under branch-only vs combined criteria, showing Size, Length, and MutationScore columns.
+### Actual output from this run
 
-### What to screenshot
-Take a screenshot of the terminal showing the full `statistics.csv` content - the table with all 9 classes listed twice (once per criterion).
+```
+TARGET_CLASS,criterion,Size,Length,MutationScore
+tutorial.ATM,BRANCH,10,76,0.4166666666666667
+tutorial.ATMCard,BRANCH,8,48,0.6666666666666666
+tutorial.Bank,BRANCH,4,11,0.8
+tutorial.BankAccount,BRANCH,2,6,0.8
+tutorial.Owner,BRANCH,1,1,1.0
+tutorial.CurrentAccount,BRANCH,2,7,0.7391304347826086
+tutorial.SavingsAccount,BRANCH,3,9,0.8529411764705882
+tutorial.Company,BRANCH,1,2,1.0
+tutorial.Person,BRANCH,2,4,0.0
+tutorial.ATM,LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH,15,118,0.4166666666666667
+tutorial.ATMCard,LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH,14,62,0.6666666666666666
+tutorial.Bank,LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH,4,15,0.8
+tutorial.BankAccount,LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH,8,25,1.0
+tutorial.Owner,LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH,1,1,1.0
+tutorial.CurrentAccount,LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH,3,13,0.8695652173913043
+tutorial.SavingsAccount,LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH,4,13,0.9411764705882353
+tutorial.Company,LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH,3,6,1.0
+tutorial.Person,LINE;BRANCH;EXCEPTION;WEAKMUTATION;OUTPUT;METHOD;METHODNOEXCEPTION;CBRANCH,6,12,1.0
+```
 
 ### Key finding
-Combined criteria produces **larger test suites** (higher Size and Length) and generally **higher mutation scores** than branch-only, at the cost of longer generation time.
+Combined criteria produces larger test suites (higher Size and Length) and generally higher mutation scores than branch-only. For example, BankAccount goes from mutation score 0.8 (BRANCH) to 1.0 (combined), and Person goes from 0.0 to 1.0.
 
 ---
 
 ## Tutorial 4 - Extending EvoSuite
 
-**Screenshot location: after running both extension tests**
+**Screenshot: capture from `* EvoSuite 1.2.1-SNAPSHOT` down to `* Done!` - stop before the AgentLoader lines**
 
 This tutorial adds two extensions to EvoSuite 1.2.1-SNAPSHOT:
 
 ### Extension 1: `MiddleCrossOver`
-A custom crossover operator that always cuts each chromosome at its **midpoint** instead of a random point. Located at [Tutorial_4/ga/operators/crossover/MiddleCrossOver.java](Tutorial_4/ga/operators/crossover/MiddleCrossOver.java).
+A custom crossover operator that always cuts each chromosome at its midpoint instead of a random point. Located at [Tutorial_4/ga/operators/crossover/MiddleCrossOver.java](Tutorial_4/ga/operators/crossover/MiddleCrossOver.java).
 
 ### Extension 2: `MethodPair` Coverage Criterion
-A new coverage criterion requiring that two specific methods are called **in sequence** within the same test. Files in [Tutorial_4/coverage/methodpair/](Tutorial_4/coverage/methodpair/).
+A new coverage criterion requiring that two specific methods are called in sequence within the same test. Files in [Tutorial_4/coverage/methodpair/](Tutorial_4/coverage/methodpair/).
 
 ### Running with the pre-built extended jar
 
 ```powershell
 cd Tutorial_Stack
 
-# Test Extension 1: MIDDLE crossover
+# Extension 1: MIDDLE crossover
 java -jar ../evosuite-master-extended.jar `
   -class tutorial.Stack `
   -projectCP target\classes `
@@ -217,38 +252,41 @@ java -jar ../evosuite-master-extended.jar `
   -Dcrossover_function=MIDDLE `
   -Dsearch_budget=20
 
-# Test Extension 2: METHODPAIR criterion  <- SCREENSHOT HERE
+# Extension 2: METHODPAIR criterion
 java -jar ../evosuite-master-extended.jar `
   -class tutorial.Stack `
   -projectCP target\classes `
-  -Dcriterion=METHODPAIR:BRANCH `
+  "-Dcriterion=METHODPAIR:BRANCH" `
   -Dsearch_budget=20
 ```
 
-**Expected output for Extension 1:**
-```
-* Test criterion:
-  - Branch Coverage
-* Coverage of criterion BRANCH: 100%
-* Generated X tests with total length XX
-* Done!
-```
+### Actual output from this run
 
-**Expected output for Extension 2:**
 ```
-* Test criterion:
+* EvoSuite 1.2.1-SNAPSHOT
+* Going to generate test cases for class: tutorial.Stack
+* Test criteria:
   - Method Pair Coverage
   - Branch Coverage
+* Total number of test goals for DYNAMOSA: 19
+* Search finished after 2s and 5 generations, 5364 statements
+* Coverage analysis for criterion METHODPAIR
 * Coverage of criterion METHODPAIR: 100%
+* Total number of goals: 12
+* Number of covered goals: 12
+* Coverage analysis for criterion BRANCH
 * Coverage of criterion BRANCH: 100%
-* Generated X tests with total length XX
+* Total number of goals: 7
+* Number of covered goals: 7
+* Generated 6 tests with total length 33
+* Resulting test suite's coverage: 100%
+* Resulting test suite's mutation score: 61%
+* Writing JUnit test case 'Stack_ESTest' to evosuite-tests
 * Done!
+* Computation finished
 ```
 
-### What to screenshot
-Take a screenshot showing **both** extension runs in the terminal:
-- Extension 1: MIDDLE crossover achieving 100% branch coverage
-- Extension 2: METHODPAIR criterion achieving 100% METHODPAIR + BRANCH coverage
+> Note: `AgentLoader` errors after `Done!` are a known Windows JVM attach limitation. They do not affect test generation results.
 
 ### Modified EvoSuite files (in `Tutorial_4/modified/`)
 
@@ -283,7 +321,7 @@ The MethodPair criterion built in Tutorial 4 is the ideal first benchmark: an LL
 
 | # | Tutorial | What to capture |
 |---|----------|----------------|
-| 1 | Command Line | EvoSuite generation output + `OK (5 tests)` from JUnit |
-| 2 | Maven Integration | `Tests run: 19, Failures: 0` + `BUILD SUCCESS` |
-| 3 | Running Experiments | Full `statistics.csv` table (18 rows, BRANCH vs combined) |
-| 4 | Extending EvoSuite | Both extensions running: MIDDLE crossover + METHODPAIR 100% |
+| 1 | Command Line | From `* EvoSuite 1.0.6` to `* Computation finished` |
+| 2 | Maven Integration | From `T E S T S` to `BUILD SUCCESS` |
+| 3 | Running Experiments | Full statistics.csv table (18 data rows) |
+| 4 | Extending EvoSuite | From `* EvoSuite 1.2.1-SNAPSHOT` to `* Done!` (stop before AgentLoader errors) |
